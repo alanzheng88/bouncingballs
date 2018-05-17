@@ -48,6 +48,8 @@ function loop() {
       true
     );
     balls.push(ball);
+    var count = parseInt(ballCount.textContent) || 0;
+    ballCount.textContent = count + 1;
   }
 
   for (var i = 0; i < balls.length; i++) {
@@ -68,10 +70,6 @@ function loop() {
 
   evilCircle.collisionDetect();
   evilCircle.draw();
-
-  if (!ballCount.textContent) {
-    ballCount.textContent = balls.length;
-  }
 
   requestAnimationFrame(loop);
 }
