@@ -4,4 +4,4 @@ This is my own implementation of [Mozilla's Bouncing Balls Tutorial](https://dev
 
 ## Usage
 
-Use arrow keys to move the evil circle (white) to capture the evil balls
+Use arrow keys to move the evil circle (white) to capture the bouncing balls
