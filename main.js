@@ -2,6 +2,7 @@
 
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
+var ballCount = document.querySelector('#ball-count');
 
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
@@ -67,6 +68,10 @@ function loop() {
 
   evilCircle.collisionDetect();
   evilCircle.draw();
+
+  if (!ballCount.textContent) {
+    ballCount.textContent = balls.length;
+  }
 
   requestAnimationFrame(loop);
 }
@@ -204,6 +209,7 @@ function evilCircleCollisionDetect() {
     if (distance <= this.size + ball.size 
           + EVIL_CIRCLE_LINE_WIDTH) {
       ball.exists = false;
+      ballCount.textContent = parseInt(ballCount.textContent) - 1;
     }
   }
 }

@@ -23,3 +23,11 @@ h1 {
   color: transparent;
   text-shadow: 0 0 4px white;
 }
+
+p {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  margin: 0;
+}
