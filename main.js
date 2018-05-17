@@ -51,6 +51,7 @@ function loop() {
 
   for (var i = 0; i < balls.length; i++) {
     var ball = balls[i];
+    if (!ball.exists) { continue; }
     ball.draw();
     ball.update();
   }
@@ -97,7 +98,6 @@ function EvilCircle(x, y, exists) {
 }
 
 function drawBall() {
-  if (!this.exists) { return; }
   ctx.beginPath();
   ctx.fillStyle = this.color;
   ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
@@ -105,7 +105,6 @@ function drawBall() {
 }
 
 function updateBall() {
-  if (!this.exists) { return; }
   this.collisionDetect();
   var status = this.checkBounds();
   if (status.hitsLeftWall || status.hitsRightWall) {
