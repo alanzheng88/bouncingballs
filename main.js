@@ -13,18 +13,20 @@ const balls = [];
 const NUMBER_OF_BALLS = 10;
 const EVIL_CIRCLE_HORIZONTAL_SPEED = 20;
 const EVIL_CIRCLE_VERTICAL_SPEED = 20;
+const EVIL_CIRCLE_LINE_WIDTH = 3;
 var evilCircle;
 Shape.prototype.checkBounds = checkBounds;
 Ball.prototype = Object.create(Shape.prototype);
 Ball.prototype.constructor = Ball;
 Ball.prototype.draw = drawBall;
 Ball.prototype.update = updateBall;
-Ball.prototype.collisionDetect = collisionDetect;
+Ball.prototype.collisionDetect = ballCollisionDetect;
 EvilCircle.prototype = Object.create(Shape.prototype);
 EvilCircle.prototype.constructor = EvilCircle;
 EvilCircle.prototype.draw = drawEvilCircle;
 EvilCircle.prototype.update = updateEvilCircle;
 EvilCircle.prototype.setControls = setControls;
+EvilCircle.prototype.collisionDetect = evilCircleCollisionDetect;
 loop();
 
 
@@ -48,8 +50,9 @@ function loop() {
   }
 
   for (var i = 0; i < balls.length; i++) {
-    balls[i].draw();
-    balls[i].update();
+    var ball = balls[i];
+    ball.draw();
+    ball.update();
   }
 
   if (!evilCircle) {
@@ -61,6 +64,7 @@ function loop() {
     evilCircle.setControls();
   }
 
+  evilCircle.collisionDetect();
   evilCircle.draw();
 
   requestAnimationFrame(loop);
@@ -93,6 +97,7 @@ function EvilCircle(x, y, exists) {
 }
 
 function drawBall() {
+  if (!this.exists) { return; }
   ctx.beginPath();
   ctx.fillStyle = this.color;
   ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
@@ -100,6 +105,7 @@ function drawBall() {
 }
 
 function updateBall() {
+  if (!this.exists) { return; }
   this.collisionDetect();
   var status = this.checkBounds();
   if (status.hitsLeftWall || status.hitsRightWall) {
@@ -113,22 +119,17 @@ function updateBall() {
 }
 
 function updateEvilCircle() {
-  var status = this.checkBounds();
-  console.log(status);
+  var status = this.checkBounds(); 
   if (status.hitsLeftWall) {
-    console.log("hit left wall");
     this.x = this.size;
   }
   if (status.hitsRightWall) {
-    console.log("hit right wall");
     this.x = width - this.size;
   }
   if (status.hitsTopWall) {
-    console.log("hit top wall");
     this.y = this.size;
   }
   if (status.hitsBottomWall) {
-    console.log("hit bottom wall");
     this.y = height - this.size;
   }
 }
@@ -146,10 +147,11 @@ function checkBounds() {
   };
 }
 
-function collisionDetect() {
+function ballCollisionDetect() {
   for (var i = 0; i < balls.length; i++) {
-    if (this == balls[i]) { continue; }
     var ball = balls[i];
+    if (!this.exists || !ball.exists) { continue; }
+    if (this == ball) { continue; }
     var distance = getDistance(this.x, this.y, 
                                 ball.x, ball.y);
     if (distance <= this.size + ball.size) {
@@ -165,7 +167,7 @@ function collisionDetect() {
 function drawEvilCircle() {
   ctx.beginPath();
   ctx.strokeStyle = this.color;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = EVIL_CIRCLE_LINE_WIDTH;
   ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
   ctx.stroke();
 }
@@ -193,6 +195,17 @@ function setControls() {
       default:
     }
     _this.update();
+  }
+}
+
+function evilCircleCollisionDetect() {
+  for (var ball of balls) {
+    if (!ball.exists) { continue; } 
+    var distance = getDistance(this.x, this.y, ball.x, ball.y);
+    if (distance <= this.size + ball.size 
+          + EVIL_CIRCLE_LINE_WIDTH) {
+      ball.exists = false;
+    }
   }
 }
 
